@@ -2,10 +2,14 @@ package com.devproject.miguelfagundez.basicnotification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IInterface
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -46,11 +50,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //********************************************
+    // Open the MainActivity (or any other) throughout
+    // an Intent and PendingIntent
+    //********************************************
+    private fun createNotificationIntent() : PendingIntent {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val notificationIntent = PendingIntent.getActivity(this, Constants.NOTIFICATION_ID, intent,PendingIntent.FLAG_ONE_SHOT)
+        return notificationIntent
+    }
+
     private fun getBuilderCompat():NotificationCompat.Builder{
+        val pendingIntent = createNotificationIntent()
         val builderCompat = NotificationCompat.Builder(this@MainActivity, Constants.NOTIFICATION_CHANNEL_ID)
             .setContentTitle(Constants.NOTIFICATION_0_TITLE)
             .setContentText(Constants.NOTIFICATION_0_TEXT)
             .setSmallIcon(R.drawable.ic_download_cloud)
+            // set the future action when user tap the notification
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
         return builderCompat
     }
 
